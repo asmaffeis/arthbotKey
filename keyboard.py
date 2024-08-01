@@ -11,17 +11,18 @@ GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # Inicializa o controlador de teclado
 keyboard = Controller()
 
-def button_callback(channel):
-    print("Botão pressionado - Simulando tecla 'p'")
-    keyboard.press('p')
-    keyboard.release('p')
-
-# Adiciona detecção de borda com a função de callback
-GPIO.add_event_detect(BUTTON_GPIO, GPIO.RISING, callback=button_callback, bouncetime=200)
-
 try:
     print("Aguardando pressionamento do botão para simular a tecla 'p'...")
+    button_pressed = False
     while True:
+        if GPIO.input(BUTTON_GPIO) == GPIO.HIGH:
+            if not button_pressed:
+                print("Botão pressionado - Simulando tecla 'p'")
+                keyboard.press('p')
+                keyboard.release('p')
+                button_pressed = True
+        else:
+            button_pressed = False
         time.sleep(0.1)
 except KeyboardInterrupt:
     print("Programa encerrado pelo usuário")
